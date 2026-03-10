@@ -1,28 +1,19 @@
-# Check that users have entered a valid
-# option based on a list
-def string_checker(question, valid_ans=("yes", "no")):
+import math
 
-    error = f"Please enter a valid option from the following list: {valid_ans}"
 
+# checks user enters yes (y) or no (n)
+def yes_no(question):
     while True:
+        response = input(question).lower()
 
-        # Get user response and make sure it's lowercase
-        user_response = input(question).lower()
-
-        for item in valid_ans:
-            # check if the user response is a word in the list
-            if item == user_response:
-                return item
-
-
-            # check if the user response is the same as
-            # the first letter of an item in the list
-            elif user_response == item[0]:
-                return item
-
-        # print error if user does not enter something that is valid
-        print(error)
-        print()
+        # checks user response, question
+        # repeats if users don't enter yes / no
+        if response == "yes" or response == "y":
+            return "yes"
+        elif response == "no" or response == "n":
+            return "no"
+        else:
+            print("please enter yes / no")
 
 
 def instructions():
@@ -46,30 +37,62 @@ Good luck!
     """)
 
 
-# checks for an integer more than 0 (allows <enter>)
+# checks for an integer with optional upper /
+# lower limits and an optional exit code for inf mode
+# / quiting the game
 
-def int_check(question):
+def int_check(question, low=None, high=None, exit_code=None):
+
+
+    # if any integer is allowed...
+    if low is None and high is None:
+        error = "Please enter an integer 1 - 10"
+
+    # if the number needs to be more than an
+    # integer (ie: rounds / high number)
+    elif low is not None and high is None:
+        error = (f"Please enter an integer that is "
+                 f"more than / equal to {low}")
+
+    # if the number needs to be between low & high
+    else:
+        error = (f"Please enter an integer that"
+                 f" is between {low} and {high} (inclusive)")
+
     while True:
-        error = "Please enter an integer that is 1 or more."
+        response = input(question).lower()
 
-        to_check = input(question)
-
-        # check for infinite mode
-        if to_check == "":
-            return "infinite"
+        # check for inf mode / exit code
+        if response == exit_code:
+            return response
 
         try:
-            response = int(to_check)
+            response = int(response)
 
-            # checks that the number is more than / equal to 1
-            if response < 1:
+            # Check the integer is not too low
+            if low is not None and response < low:
                 print(error)
+
+            # check response is more than the low number
+            elif high is not None and response > high:
+                print(error)
+
+            # if the response is valid, return it
             else:
                 return response
+
 
         except ValueError:
             print(error)
 
+
+# calc num of guesses allowed
+def calc_guesses(low, high):
+    num_range = high - low + 1
+    max_raw = math.log2(num_range)
+    max_upped = math.ceil(max_raw)
+    max_guesses = max_upped + 1
+    return max_guesses
 
 
 # Main Routine Starts here
@@ -84,19 +107,24 @@ print("👆👇 Welcome to: the Higher or Lower Game 👇👆")
 print()
 
 
-want_instructions = string_checker("Do you want to read the instructions?")
+want_instructions = yes_no("Do you want to read the instructions?")
 
 # checks user enters yes (y) or no (n)
 if want_instructions == "yes":
     instructions()
 
-
 # Ask user for number of rounds / infinite mode
-num_rounds = int_check("How many rounds would you like? Push <enter> for infinite mode: ")
+num_rounds = int_check(question="Rounds <enter for infinite>: ",
+                       low=1, exit_code="")
 
-if num_rounds == "infinite":
+if num_rounds == "" :
     mode = "infinite"
     num_rounds = 5
+
+# Get Game parameters
+low_num = int_check("Low number?")
+high_num = int_check(question="High number? ", low=low_num+1)
+guessed_allowed = calc_guesses(low_num, high_num)
 
 # Game loop starts here
 while rounds_played < num_rounds:
@@ -113,7 +141,7 @@ while rounds_played < num_rounds:
     # get user choice
     user_choice = input("Choose: ")
 
-    # If use choice is the exit code, break loop
+    # If the user choice is the exit code, break loop
     if user_choice == "xxx":
         break
 
