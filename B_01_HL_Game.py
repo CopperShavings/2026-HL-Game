@@ -1,4 +1,5 @@
 import math
+from random import random
 
 
 # checks user enters yes (y) or no (n)
@@ -22,15 +23,20 @@ def instructions():
     print("""
  *** Instructions ****
 
-To begin, choose the number of rounds (or press <enter> for
+- To begin, choose the number of rounds (or press <enter> for
 infinite mode).
 
-Then play against the computer. You need to...
+- Then you need to pick whether you would like to use default 
+parameters (0, 10) or pick your own!
 
-The rules are:
-o   insert rules
+If you decide to choose your own, select a low number and 
+a high number (high must be more than low)
 
-Select <xxx> to end the game at any time.
+
+- You need to try guess the secret number using the computers hints of 'higher' or 'lower'
+Try get it in as few guesses as possible!
+
+- Select <xxx> to end the game at any time.
 
 Good luck!
 
@@ -100,6 +106,12 @@ def calc_guesses(low, high):
 # Initialise game variables
 mode = "regular"
 rounds_played = 0
+end_game = "no"
+feedback = ""
+
+
+game_history = []
+all_scores = []
 
 # Main routine
 print()
@@ -121,10 +133,18 @@ if num_rounds == "" :
     mode = "infinite"
     num_rounds = 5
 
-# Get Game parameters
-low_num = int_check("Low number?")
-high_num = int_check(question="High number? ", low=low_num+1)
-guessed_allowed = calc_guesses(low_num, high_num)
+# ask user if they want to customise the number range
+default_params = yes_no("Do you want to use the default game parameters?")
+if default_params == "yes":
+        low_num = 0
+        high_num = 10
+else:
+    low_num = int_check("Low number? ")
+    high_num = int_check(question="High number? ", low=low_num + 1)
+
+ # calc the maximum number of guesses based on the low and high number
+    guesses_allowed = calc_guesses(low_num, high_num)
+
 
 # Game loop starts here
 while rounds_played < num_rounds:
@@ -138,7 +158,52 @@ while rounds_played < num_rounds:
     print(rounds_heading)
     print()
 
-    # get user choice
+    # Round starts here
+    # set guesses used to zero at the start of each round
+    guesses_used = 0
+    already_guessed = []
+
+    # Generate a secret number
+    secret = random.randint(low_num, high_num)
+    print("Spoiler Alert", secret)
+
+    guess = ""
+    while guess != secret and guesses_used < guesses_allowed:
+
+        # ask the user to guess the number
+        guess = int_check(question="Guess :", exit_code=("xxx"))
+
+        # check that they don't want to quit
+        if guess == "xxx":
+            # set end_game to use so that outer loop can be
+            end_game = "yes"
+            break
+
+            # check that guess is not a dupe
+        if guess in already_guessed:
+            print(f"You've already guessed {guess}. You have still used "
+                  f"{guesses_used} / {guesses_allowed} guesses. ")
+            continue
+
+        # if guess is not a duplicate, add it to 'already guessed'
+        else:
+            already_guessed.append(guess)
+
+        # check that guess is not a duplicate
+
+    print()
+
+    # Round ends here
+
+    # if user has entered the exit code, end game
+    if end_game == "yes":
+        break
+
+    rounds_played += 1
+
+    history_feedback = f"Round {rounds_played}: {feedback}"
+
+
     user_choice = input("Choose: ")
 
     # If the user choice is the exit code, break loop
@@ -155,3 +220,33 @@ while rounds_played < num_rounds:
 # Game loop ends here
 
 # Game History / statistics area
+# check users have played at least one round
+# before calculating statistics.
+if rounds_played > 0:
+    # Game History / Statistics area
+
+    # Calculate statistics
+    all_scores.sort()
+    best_score = all_scores[0]
+    worst_score = all_scores[-1]
+    average_score = sum(all_scores) / len(all_scores)
+
+    # Output the statistics
+    print("\n 📈📊 Game Statistics 📊📉")
+    print(f"Best:{best_score} | Worst:{worst_score} | Average:{average_score:.2f} ")
+    print()
+
+    # Display the game history on request
+    see_history = yes_no("Do you want to see your game history? ")
+    if see_history == "yes":
+        for item in game_history:
+            print(item)
+
+    print()
+    print("Thank you for playing")
+
+else:
+    print("xxx! Uh oh - you chickened out !xxx")
+
+
+
