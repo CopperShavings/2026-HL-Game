@@ -1,4 +1,5 @@
 import math
+import random
 from random import randint
 
 
@@ -143,7 +144,7 @@ else:
     high_num = int_check(question="High number? ", low=low_num + 1)
 
  # calc the maximum number of guesses based on the low and high number
-    guesses_allowed = calc_guesses(low_num, high_num)
+guesses_allowed = calc_guesses(low_num, high_num)
 
 
 # Game loop starts here
@@ -183,15 +184,14 @@ while rounds_played < num_rounds:
         if guess in already_guessed:
             print(f"You've already guessed {guess}. You have still used "
                   f"{guesses_used} / {guesses_allowed} guesses. ")
+            guesses_used += 1
             continue
 
         # if guess is not a duplicate, add it to 'already guessed'
         else:
             already_guessed.append(guess)
+            guesses_used += 1
 
-        # check that guess is not a duplicate
-
-    print()
 
     # Round ends here
 
@@ -201,10 +201,10 @@ while rounds_played < num_rounds:
 
     rounds_played += 1
 
+
+    # Add round result to game history
     history_feedback = f"Round {rounds_played}: {feedback}"
-
-
-    user_choice = input("Choose: ")
+    user_choice = f"{guess}"
 
     # If the user choice is the exit code, break loop
     if user_choice == "xxx":
@@ -218,6 +218,28 @@ while rounds_played < num_rounds:
         num_rounds += 1
 
 # Game loop ends here
+
+    # when the secret is guessed, we have three different feedback
+    elif guess == secret:
+
+        if guesses_used == 1:
+            feedback = "🍀🍀Lucky! You got it on the first guess🍀🍀"
+        elif guesses_used == guesses_allowed:
+            feedback = f"Phew!...You guessed the number in {guesses_used} guesses. "
+        else:
+            feedback = f"Well done! You guessed the secret number in {guesses_used} guesses. "
+
+    # if there are no guesses left
+    else:
+        feedback = "Sorry - you have no guesses left. You lose this round"
+
+    # print feedback to user
+    print(feedback)
+
+    # Additional Feedback (warn user that they are running out of guesses)
+    if guesses_used == guesses_allowed - 1:
+        print("\n Careful! - you have one guess left!!!")
+
 
 # Game History / statistics area
 # check users have played at least one round
