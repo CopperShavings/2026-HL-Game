@@ -1,5 +1,5 @@
 import math
-from random import random
+from random import randint
 
 
 # checks user enters yes (y) or no (n)
