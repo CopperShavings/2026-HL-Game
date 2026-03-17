@@ -147,6 +147,7 @@ else:
 guesses_allowed = calc_guesses(low_num, high_num)
 
 
+
 # Game loop starts here
 while rounds_played < num_rounds:
 
@@ -172,7 +173,7 @@ while rounds_played < num_rounds:
     while guess != secret and guesses_used < guesses_allowed:
 
         # ask the user to guess the number
-        guess = int_check(question="Guess :", exit_code=("xxx"))
+        guess = int_check(question="Guess :", exit_code="xxx")
 
         # check that they don't want to quit
         if guess == "xxx":
@@ -184,13 +185,41 @@ while rounds_played < num_rounds:
         if guess in already_guessed:
             print(f"You've already guessed {guess}. You have still used "
                   f"{guesses_used} / {guesses_allowed} guesses. ")
-            guesses_used += 1
             continue
 
         # if guess is not a duplicate, add it to 'already guessed'
         else:
-            already_guessed.append(guess)
             guesses_used += 1
+            already_guessed.append(guess)
+
+
+        if guess < secret and guesses_used < guesses_allowed:
+            feedback = (f"Too low, please try a higher number! "
+                        f"You've used {guesses_used} / {guesses_allowed}")
+        elif guess > secret and guesses_used < guesses_allowed:
+            feedback = (f"Too high, please try a lower number! "
+                        f"You've used {guesses_used} / {guesses_allowed} guesses")
+
+        # when the secret is guessed, we have three different feedback
+        elif guess == secret:
+
+            if guesses_used == 1:
+                feedback = "🍀🍀Lucky! You got it on the first guess🍀🍀"
+            elif guesses_used == guesses_allowed:
+                feedback = f"Phew!...You guessed the number in {guesses_used} guesses. "
+            else:
+                feedback = f"Well done! You guessed the secret number in {guesses_used} guesses. "
+
+        # if there are no guesses left
+        else:
+            feedback = "Sorry - you have no guesses left. You lose this round"
+
+        # Additional Feedback (warn user that they are running out of guesses)
+        if guesses_used == guesses_allowed - 1:
+            print("\n Careful! - you have one guess left!!!")
+
+        # print feedback to user
+        print(feedback)
 
 
     # Round ends here
@@ -218,28 +247,6 @@ while rounds_played < num_rounds:
         num_rounds += 1
 
 # Game loop ends here
-
-    # when the secret is guessed, we have three different feedback
-    elif guess == secret:
-
-        if guesses_used == 1:
-            feedback = "🍀🍀Lucky! You got it on the first guess🍀🍀"
-        elif guesses_used == guesses_allowed:
-            feedback = f"Phew!...You guessed the number in {guesses_used} guesses. "
-        else:
-            feedback = f"Well done! You guessed the secret number in {guesses_used} guesses. "
-
-    # if there are no guesses left
-    else:
-        feedback = "Sorry - you have no guesses left. You lose this round"
-
-    # print feedback to user
-    print(feedback)
-
-    # Additional Feedback (warn user that they are running out of guesses)
-    if guesses_used == guesses_allowed - 1:
-        print("\n Careful! - you have one guess left!!!")
-
 
 # Game History / statistics area
 # check users have played at least one round
