@@ -228,8 +228,6 @@ while rounds_played < num_rounds:
     if end_game == "yes":
         break
 
-    rounds_played += 1
-
 
     # Add round result to game history
     history_feedback = f"Round {rounds_played}: {feedback}"
@@ -252,13 +250,11 @@ while rounds_played < num_rounds:
 # check users have played at least one round
 # before calculating statistics.
 if rounds_played > 0:
-    # Game History / Statistics area
-
     # Calculate statistics
     all_scores.sort()
     best_score = all_scores[0]
     worst_score = all_scores[-1]
-    average_score = sum(all_scores) / len(all_scores)
+    average_score = sum(all_scores)/len(all_scores)
 
     # Output the statistics
     print("\n 📈📊 Game Statistics 📊📉")
