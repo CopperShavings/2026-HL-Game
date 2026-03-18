@@ -50,7 +50,6 @@ Good luck!
 
 def int_check(question, low=None, high=None, exit_code=None):
 
-
     # if any integer is allowed...
     if low is None and high is None:
         error = "Please enter an integer 1 - 10"
@@ -149,7 +148,7 @@ guesses_allowed = calc_guesses(low_num, high_num)
 
 
 # Game loop starts here
-while rounds_played < num_rounds:
+while mode =="infinite" or rounds_played < num_rounds:
 
     # Rounds headings (based on mode)
     if mode == "infinite":
@@ -162,7 +161,7 @@ while rounds_played < num_rounds:
 
     # Round starts here
     # set guesses used to zero at the start of each round
-    guesses_used = 0
+    guesses_used: int = 0
     already_guessed = []
 
     # Generate a secret number
@@ -215,7 +214,9 @@ while rounds_played < num_rounds:
             feedback = "Sorry - you have no guesses left. You lose this round"
 
         # Additional Feedback (warn user that they are running out of guesses)
-        if guesses_used == guesses_allowed - 1:
+        if guesses_used == guesses_allowed - 1 and guess > secret:
+            print("\n Careful! - you have one guess left!!!")
+        elif guesses_used == guesses_allowed - 1 and guess < secret:
             print("\n Careful! - you have one guess left!!!")
 
         # print feedback to user
@@ -230,7 +231,7 @@ while rounds_played < num_rounds:
 
 
     # Add round result to game history
-    history_feedback = f"Round {rounds_played}: {feedback}"
+    history_feedback = f"Round {rounds_played + 1}: {feedback}"
     user_choice = f"{guess}"
 
     # If the user choice is the exit code, break loop
@@ -252,20 +253,24 @@ while rounds_played < num_rounds:
 if rounds_played > 0:
     # Calculate statistics
     all_scores.sort()
-    best_score = all_scores[0]
+    best_score = all_scores.append(0)
     worst_score = all_scores[-1]
     average_score = sum(all_scores)/len(all_scores)
 
-    # Output the statistics
-    print("\n 📈📊 Game Statistics 📊📉")
-    print(f"Best:{best_score} | Worst:{worst_score} | Average:{average_score:.2f} ")
-    print()
 
     # Display the game history on request
     see_history = yes_no("Do you want to see your game history? ")
     if see_history == "yes":
         for item in game_history:
             print(item)
+
+
+    # Output the statistics
+    game_history.append(all_scores.sort())
+    print("\n 📈📊 Game Statistics 📊📉")
+    print(f"Best:{best_score} | Worst:{worst_score} | Average:{average_score:.2f} ")
+    print()
+
 
     print()
     print("Thank you for playing")
