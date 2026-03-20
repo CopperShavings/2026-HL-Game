@@ -126,19 +126,24 @@ if want_instructions == "yes":
     instructions()
 
 # Ask user for number of rounds / infinite mode
-num_rounds = int_check(question="Rounds <enter for infinite>: ",
+num_rounds = int_check(question="Rounds? <enter for infinite>: ",
                        low=1, exit_code="")
 
 if num_rounds == "" :
     mode = "infinite"
     num_rounds = 5
 
+else:
+    print(f"{num_rounds} round/s chosen")
+
 # ask user if they want to customise the number range
+print()
 default_params = yes_no("Do you want to use the default game parameters?")
 if default_params == "yes":
         low_num = 0
         high_num = 10
 else:
+    print()
     low_num = int_check("Low number? ")
     high_num = int_check(question="High number? ", low=low_num + 1)
 
@@ -232,6 +237,7 @@ while mode =="infinite" or rounds_played < num_rounds:
 
     # Add round result to game history
     history_feedback = f"Round {rounds_played + 1}: {feedback}"
+    game_history.append(history_feedback)
     user_choice = f"{guess}"
 
     # If the user choice is the exit code, break loop
@@ -249,31 +255,29 @@ while mode =="infinite" or rounds_played < num_rounds:
 
 # Game History / statistics area
 # check users have played at least one round
+    all_scores.append(guesses_used)
+
 # before calculating statistics.
 if rounds_played > 0:
-    # Calculate statistics
     all_scores.sort()
-    best_score = all_scores.append(0)
+
+    best_score = all_scores[0]
     worst_score = all_scores[-1]
     average_score = sum(all_scores)/len(all_scores)
 
-
     # Display the game history on request
     see_history = yes_no("Do you want to see your game history? ")
+    print()
     if see_history == "yes":
+        print("\n 📈📊 Game Statistics 📊📉")
+        print(f"Best:{best_score} | Worst:{worst_score} | Average:{average_score:.2f} ")
+        print()
+
         for item in game_history:
             print(item)
 
-
-    # Output the statistics
-    game_history.append(all_scores.sort())
-    print("\n 📈📊 Game Statistics 📊📉")
-    print(f"Best:{best_score} | Worst:{worst_score} | Average:{average_score:.2f} ")
-    print()
-
-
-    print()
-    print("Thank you for playing")
+        print ()
+        print("Thank you for playing")
 
 else:
     print("xxx! Uh oh - you chickened out !xxx")
