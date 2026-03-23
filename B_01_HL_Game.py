@@ -37,7 +37,7 @@ a high number (high must be more than low)
 - You need to try guess the secret number using the computers hints of 'higher' or 'lower'
 Try get it in as few guesses as possible!
 
-- Select <xxx> to end the game at any time.
+- Select <xxx> to end the game.
 
 Good luck!
 
